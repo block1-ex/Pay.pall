@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayPal Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      background: #f5f7fa;
+      color: #1a202c;
+      line-height: 1.6;
+    }
+
+    /* ===== NAVIGATION ===== */
+    .navbar {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0 2rem;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #003087;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .navbar-brand svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0070ba, #003087);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: #1a202c;
+    }
+
+    .user-status {
+      font-size: 12px;
+      color: #718096;
+    }
+
+    /* ===== MAIN CONTAINER ===== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* ===== HEADER SECTION ===== */
+    .page-header {
+      margin-bottom: 3rem;
+    }
+
+    .page-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      font-size: 16px;
+      color: #718096;
+    }
+
+    /* ===== GRID LAYOUT ===== */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== CARD STYLES ===== */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      border-color: #cbd5e0;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      color: #047857;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #047857;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* ===== PROFIT CARD ===== */
+    .profit-section {
+      grid-column: 1 / -1;
+    }
+
+    .profit-card {
+      background: linear-gradient(135deg, #003087 0%, #0070ba 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 112, 186, 0.2);
+      border: none;
+    }
+
+    .profit-card:hover {
+      box-shadow: 0 15px 40px rgba(0, 112, 186, 0.3);
+    }
+
+    .profit-label {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .profit-amount {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .profit-currency {
+      font-size: 20px;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    .profit-change {
+      font-size: 13px;
+      opacity: 0.8;
+      margin-top: 12px;
+    }
+
+    /* ===== INFO ROWS ===== */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem;
+      background: #f8fafc;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-row:hover {
+      background: #f0f4f8;
+      border-color: #cbd5e0;
+    }
+
+    .info-label {
+      font-size: 13px;
+      color: #718096;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .info-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a202c;
+    }
+
+    .receiving-row {
+      background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+      border: 1px solid #a7f3d0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .receiving-row .info-label {
+      color: #047857;
+    }
+
+    .receiving-row .info-value {
+      color: #047857;
+      margin-bottom: 6px;
+    }
+
+    .recipient-info {
+      font-size: 12px;
+      color: #047857;
+      opacity: 0.8;
+    }
+
+    /* ===== ACTION BUTTONS ===== */
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0070ba, #005ea6);
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 112, 186, 0.3);
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 112, 186, 0.4);
+      background: linear-gradient(135deg, #005ea6, #004794);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #0070ba;
+      border: 2px solid #0070ba;
+      flex: 1;
+    }
+
+    .btn-secondary:hover {
+      background: #f0f7ff;
+    }
+
+    .btn-danger {
+      background: #fed7d7;
+      color: #c53030;
+      flex: 1;
+    }
+
+    .btn-danger:hover {
+      background: #fc8181;
+      color: white;
+    }
+
+    /* ===== STATS SECTION ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: #0070ba;
+      box-shadow: 0 4px 12px rgba(0, 112, 186, 0.1);
+    }
+
+    .stat-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== WELCOME NOTIFICATION ===== */
+    .welcome-card {
+      background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+      border: 1px solid #7dd3fc;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .welcome-icon {
+      font-size: 48px;
+      flex-shrink: 0;
+    }
+
+    .welcome-content {
+      flex: 1;
+    }
+
+    .welcome-title {
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .welcome-message {
+      font-size: 14px;
+      color: #0c4a6e;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .welcome-highlight {
+      font-weight: 700;
+      color: #047857;
+    }
+
+    /* ===== MODAL/WIZARD ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+      position: relative;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .modal-content.fade-out {
+      animation: fadeOut 0.3s ease;
+    }
+
+    /* ===== PROGRESS STEPS ===== */
+    .progress-container {
+      margin-bottom: 2rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #e2e8f0;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0070ba, #003087);
+      transition: width 0.5s ease;
+      border-radius: 2px;
+    }
+
+    .steps-indicator {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: #e2e8f0;
+      z-index: -1;
+    }
+
+    .step.active:not(:last-child)::after {
+      background: #0070ba;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #718096;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .step.active .step-number {
+      background: linear-gradient(135deg, #0070ba, #003087);
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 112, 186, 0.3);
+    }
+
+    .step.completed .step-number {
+      background: #047857;
+      color: white;
+    }
+
+    .step-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #718096;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .step.active .step-label {
+      color: #0070ba;
+      font-weight: 700;
+    }
+
+    .step.completed .step-label {
+      color: #047857;
+    }
+
+    /* ===== STEP CONTENT ===== */
+    .step-content {
+      display: none;
+      animation: slideUp 0.3s ease;
+    }
+
+    .step-content.active {
+      display: block;
+    }
+
+    .modal-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 8px;
+    }
+
+    .modal-subtitle {
+      font-size: 14px;
+      color: #718096;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: #e2e8f0;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a5568;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: #cbd5e0;
+      color: #1a202c;
+    }
+
+    /* ===== PAYMENT METHOD ===== */
+    .payment-method {
+      background: linear-gradient(135deg, #f7931a, #f9a825);
+      border-radius: 12px;
+      padding: 2rem;
+      color: white;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 20px rgba(247, 147, 26, 0.3);
+    }
+
+    .payment-method-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .payment-method-name {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .payment-method-desc {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    /* ===== WALLET ADDRESS ===== */
+    .wallet-section {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .wallet-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .wallet-address-display {
+      background: white;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #1a202c;
+      word-break: break-all;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .btn-copy {
+      width: 100%;
+      padding: 10px 16px;
+      background: #0070ba;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-copy:hover {
+      background: #005ea6;
+    }
+
+    /* ===== AMOUNT DISPLAY ===== */
+    .amount-display {
+      background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+      border: 1px solid #a7f3d0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .amount-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #047857;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .amount-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #047857;
+      margin-bottom: 4px;
+    }
+
+    .amount-desc {
+      font-size: 13px;
+      color: #047857;
+      opacity: 0.8;
+    }
+
+    /* ===== SUMMARY CARD ===== */
+    .summary-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      font-size: 14px;
+      color: #718096;
+      font-weight: 600;
+    }
+
+    .summary-value {
+      font-size: 14px;
+      color: #1a202c;
+      font-weight: 700;
+    }
+
+    .summary-row.fee-row {
+      background: #fff5e6;
+      padding: 1rem;
+      margin: 1rem -1.5rem 0 -1.5rem;
+      border-radius: 0 0 12px 12px;
+    }
+
+    .summary-row.fee-row .summary-label {
+      color: #7c2d12;
+    }
+
+    .summary-row.fee-row .summary-value {
+      color: #c53030;
+      font-weight: 700;
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-top: 2px solid #0070ba;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0070ba;
+      margin-top: 1rem;
+    }
+
+    /* ===== SUCCESS STATE ===== */
+    .success-container {
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    .success-icon {
+      font-size: 64px;
+      margin-bottom: 1.5rem;
+      animation: scaleIn 0.5s ease;
+    }
+
+    @keyframes scaleIn {
+      from {
+        transform: scale(0);
+      }
+      to {
+        transform: scale(1);
+      }
+    }
+
+    .success-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #047857;
+      margin-bottom: 12px;
+    }
+
+    .success-message {
+      font-size: 16px;
+      color: #718096;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .success-detail {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      font-size: 14px;
+      color: #047857;
+    }
+
+    /* ===== MODAL BUTTONS ===== */
+    .modal-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .modal-buttons .btn {
+      flex: 1;
+    }
+
+    .btn-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-disabled:hover {
+      transform: none;
+      box-shadow: 0 4px 12px rgba(0, 112, 186, 0.3);
+    }
+
+    /* ===== LOADING SPINNER ===== */
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0 1rem;
+      }
+
+      .navbar-right {
+        gap: 1rem;
+      }
+
+      .container {
+        padding: 1.5rem 1rem;
+      }
+
+      .page-title {
+        font-size: 24px;
+      }
+
+      .dashboard-grid {
+        gap: 1rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      .modal-content {
+        padding: 1.5rem;
+        max-width: calc(100% - 2rem);
+      }
+
+      .profit-amount {
+        font-size: 36px;
+      }
+
+      .stats-grid {
+        gap: 1rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .btn-secondary, .btn-danger {
+        flex: 1;
+      }
+
+      .steps-indicator {
+        gap: 0.5rem;
+      }
+
+      .step-label {
+        font-size: 10px;
+      }
+
+      .step-number {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+      }
+
+      .welcome-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .welcome-icon {
+        font-size: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <a href="#" class="navbar-brand">
+      <svg viewBox="0 0 124 33" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#003087" d="M46.211 6.736h-5.944c-.419 0-.72.289-.847.75l-2.52 15.934c-.096.609.266 1.111.847 1.111h2.897c.42 0 .72-.292.848-.75l.695-4.394c.127-.458.428-.75.847-.75h1.937c4.505 0 7.144-2.186 7.844-6.5.326-1.994.017-3.558-1-4.661-.96-1.04-2.656-1.74-5.004-1.74zm.797 6.316c-.374 2.454-2.249 2.454-4.062 2.454h-1.032l.724-4.583c.085-.515.426-.75.847-.75h.682c1.254 0 2.417.084 3.002.98.37.57.25 1.41-.161 1.899z"/>
+        <path fill="#003087" d="M66.654 13.069h-2.974c-.378 0-.652.271-.766.677l-.136.861-.216-.313c-.676-.988-2.17-1.32-3.668-1.32-3.447 0-6.391 2.618-6.977 6.298-.601 3.717 1.633 6.298 4.914 6.298 1.64 0 3.188-.855 4.073-2.242l-.18.894c-.102.609.207 1.111.793 1.111h2.689c.42 0 .719-.292.847-.75l1.646-10.421c.101-.608-.207-1.11-.793-1.11zm-4.565 6.044c-.316 1.871-1.801 3.127-3.695 3.127-1.24 0-2.164-.876-1.875-2.168.277-1.852 1.801-3.14 3.652-3.14 1.228 0 2.137.874 1.918 2.181z"/>
+        <path fill="#009cde" d="M115.048 23.289c-.316 1.871-1.801 3.127-3.695 3.127-1.24 0-2.164-.876-1.875-2.168.277-1.852 1.801-3.14 3.652-3.14 1.228 0 2.137.874 1.918 2.181z"/>
+      </svg>
+      PayPal
+    </a>
+
+    <div class="navbar-right">
+      <div class="user-profile">
+        <div class="user-avatar">CL</div>
+        <div class="user-info">
+          <div class="user-name">Charlene Lowe</div>
+          <div class="user-status">Premium Member</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">Welcome back! Here's your account overview.</p>
+    </div>
+
+    <!-- Welcome Notification Card -->
+    <div class="welcome-card">
+      <div class="welcome-icon">👋</div>
+      <div class="welcome-content">
+        <div class="welcome-title">Welcome to PayPal Gateway</div>
+        <div class="welcome-message">
+          Congratulations! You have received a <span class="welcome-highlight">new incoming deposit</span>. Your account has been credited with funds and is ready for processing.
+        </div>
+        <div class="welcome-message" style="margin-bottom: 0; font-size: 12px;">
+          Click "Settle Now" below to complete your transaction processing and clear the capital allocation fee.
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">$10,000</div>
+        <div class="stat-label">Total Profit</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✓</div>
+        <div class="stat-value">Verified</div>
+        <div class="stat-label">Account Status</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🟢</div>
+        <div class="stat-value">Active</div>
+        <div class="stat-label">Current Status</div>
+      </div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Profit Card (Full Width) -->
+      <div class="card profit-section">
+        <div class="profit-card">
+          <div class="profit-label">Total Available Balance</div>
+          <div>
+            <span class="profit-amount">10,000</span><span class="profit-currency">USD</span>
+          </div>
+          <div class="profit-change">↑ 12.5% from last month</div>
+        </div>
+      </div>
+
+      <!-- Account Details Card -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Account Details</h3>
+          <span class="status-badge">
+            <span class="status-dot"></span>
+            Active
+          </span>
+        </div>
+
+        <div class="info-row">
+          <div>
+            <div class="info-label">Account Type</div>
+            <div class="info-value">Premium</div>
+          </div>
+          <div style="text-align: right;">📊</div>
+        </div>
+
+        <div class="info-row">
+          <div>
+            <div class="info-label">Member Since</div>
+            <div class="info-value">Jan 2023</div>
+          </div>
+          <div style="text-align: right;">📅</div>
+        </div>
+
+        <div class="info-row">
+          <div>
+            <div class="info-label">Transactions</div>
+            <div class="info-value">342</div>
+          </div>
+          <div style="text-align: right;">📈</div>
+        </div>
+      </div>
+
+      <!-- Recipient Card -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Recipient Information</h3>
+        </div>
+
+        <div class="info-row receiving-row">
+          <div class="info-label">Receiving Account</div>
+          <div class="info-value">@charlenelowe248</div>
+          <div class="recipient-info">Recipient: Charlene Lowe</div>
+        </div>
+
+        <div class="info-row">
+          <div>
+            <div class="info-label">Account Holder</div>
+            <div class="info-value">Charlene Lowe</div>
+          </div>
+          <div style="text-align: right;">👤</div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn btn-primary" id="settleBtn">Settle Now</button>
+        </div>
+      </div>
+
+      <!-- Security Card -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Security</h3>
+        </div>
+
+        <div class="info-row">
+          <div>
+            <div class="info-label">Two-Factor Auth</div>
+            <div class="info-value">Enabled</div>
+          </div>
+          <div style="text-align: right; color: #047857;">🔒</div>
+        </div>
+
+        <div class="info-row">
+          <div>
+            <div class="info-label">Last Login</div>
+            <div class="info-value">Today, 2:34 PM</div>
+          </div>
+          <div style="text-align: right;">🕐</div>
+        </div>
+
+        <div class="info-row">
+          <div>
+            <div class="info-label">Login Attempts</div>
+            <div class="info-value">0 Failed</div>
+          </div>
+          <div style="text-align: right;">✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAYMENT WIZARD MODAL ===== -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal">×</button>
+
+      <!-- Progress Bar -->
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+        </div>
+
+        <!-- Steps Indicator -->
+        <div class="steps-indicator">
+          <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">Review</div>
+          </div>
+          <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">Payment</div>
+          </div>
+          <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">Confirm</div>
+          </div>
+          <div class="step" data-step="4">
+            <div class="step-number">✓</div>
+            <div class="step-label">Complete</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1: REVIEW -->
+      <div class="step-content active" data-step="1">
+        <div class="modal-header">
+          <h2 class="modal-title">Review Settlement</h2>
+          <p class="modal-subtitle">Confirm your settlement details</p>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-row">
+            <span class="summary-label">Deposit Amount Received</span>
+            <span class="summary-value">$10,000.00 USD</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Settlement Type</span>
+            <span class="summary-value">Capital Allocation</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Allocation Rate</span>
+            <span class="summary-value">2.37%</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Processing Time</span>
+            <span class="summary-value">10-30 Minutes</span>
+          </div>
+          <div class="summary-row fee-row">
+            <span class="summary-label">⚠️ Capital Allocation Fee</span>
+            <span class="summary-value">$450.00</span>
+          </div>
+          <div class="summary-total">
+            <span>Total Due</span>
+            <span>$450.00</span>
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button class="btn btn-primary" id="step1NextBtn">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: PAYMENT METHOD -->
+      <div class="step-content" data-step="2">
+        <div class="modal-header">
+          <h2 class="modal-title">Choose Payment Method</h2>
+          <p class="modal-subtitle">Select how you'd like to pay</p>
+        </div>
+
+        <div class="payment-method">
+          <div class="payment-method-icon">₿</div>
+          <div class="payment-method-name">Bitcoin</div>
+          <div class="payment-method-desc">Fast, Secure & Anonymous</div>
+        </div>
+
+        <div class="amount-display">
+          <div class="amount-label">Capital Allocation Fee Due</div>
+          <div class="amount-value">$450.00</div>
+          <div class="amount-desc">USD Equivalent in Bitcoin</div>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="btn btn-secondary" id="step2BackBtn">Back</button>
+          <button class="btn btn-primary" id="step2NextBtn">Next</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: CONFIRM PAYMENT -->
+      <div class="step-content" data-step="3">
+        <div class="modal-header">
+          <h2 class="modal-title">Bitcoin Wallet Address</h2>
+          <p class="modal-subtitle">Complete your settlement securely</p>
+        </div>
+
+        <div class="wallet-section">
+          <label class="wallet-label">Bitcoin Wallet Address</label>
+          <div class="wallet-address-display" id="walletCode">1BMVsEZuhqHDBEtM9NUzjSRNPnycXLL6rQ</div>
+          <button class="btn-copy" id="copyBtn">
+            <span>📋</span>
+            <span id="copyText">Copy Address</span>
+          </button>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; font-size: 13px; color: #4a5568; line-height: 1.6;">
+          <strong style="color: #1a202c;">Instructions:</strong><br>
+          1. Copy the wallet address above<br>
+          2. Send exactly $450.00 USD worth of Bitcoin<br>
+          3. Payment will be confirmed within 10-30 minutes
+        </div>
+
+        <div class="modal-buttons">
+          <button class="btn btn-secondary" id="step3BackBtn">Back</button>
+          <button class="btn btn-primary" id="step3NextBtn">I've Sent Payment</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: SUCCESS -->
+      <div class="step-content" data-step="4">
+        <div class="success-container">
+          <div class="success-icon">✅</div>
+          <h2 class="success-title">Settlement Initiated!</h2>
+          <p class="success-message">
+            Your capital allocation fee payment has been received and is now processing.
+          </p>
+
+          <div class="success-detail">
+            <strong>Transaction ID:</strong> BTC-20241007-89234<br>
+            <strong>Amount Paid:</strong> $450.00 USD<br>
+            <strong>Status:</strong> Pending Confirmation<br>
+            <strong>Expected Completion:</strong> 10-30 minutes
+          </div>
+
+          <p class="success-message" style="font-size: 13px; color: #718096;">
+            You'll receive an email confirmation once your payment is processed. Your account will be updated automatically.
+          </p>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="btn btn-primary" id="finishBtn" style="width: 100%;">Return to Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const settleBtn = document.getElementById('settleBtn');
+    const paymentModal = document.getElementById('paymentModal');
+    const closeModal = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const walletCode = document.getElementById('walletCode');
+    const copyText = document.getElementById('copyText');
+    const progressFill = document.getElementById('progressFill');
+    const finishBtn = document.getElementById('finishBtn');
+
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    // Open Payment Modal
+    settleBtn.addEventListener('click', () => {
+      currentStep = 1;
+      updateStep(1);
+      paymentModal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Close Payment Modal
+    const closePaymentModal = () => {
+      paymentModal.classList.remove('show');
+      document.body.style.overflow = 'auto';
+      currentStep = 1;
+    };
+
+    closeModal.addEventListener('click', closePaymentModal);
+    cancelBtn.addEventListener('click', closePaymentModal);
+
+    // Close modal when clicking outside
+    paymentModal.addEventListener('click', (e) => {
+      if (e.target === paymentModal) {
+        closePaymentModal();
+      }
+    });
+
+    // Update Step
+    function updateStep(step) {
+      currentStep = step;
+
+      // Hide all step contents
+      document.querySelectorAll('.step-content').forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // Show current step content
+      document.querySelector(`.step-content[data-step="${step}"]`).classList.add('active');
+
+      // Update progress bar
+      const progress = (step / totalSteps) * 100;
+      progressFill.style.width = progress + '%';
+
+      // Update step indicators
+      document.querySelectorAll('.step').forEach((stepEl, index) => {
+        const stepNumber = index + 1;
+        stepEl.classList.remove('active', 'completed');
+        if (stepNumber < step) {
+          stepEl.classList.add('completed');
+        } else if (stepNumber === step) {
+          stepEl.classList.add('active');
+        }
+      });
+
+      // Scroll to top
+      document.querySelector('.modal-content').scrollTop = 0;
+    }
+
+    // Step 1: Next
+    document.getElementById('step1NextBtn').addEventListener('click', () => {
+      updateStep(2);
+    });
+
+    // Step 2: Back & Next
+    document.getElementById('step2BackBtn').addEventListener('click', () => {
+      updateStep(1);
+    });
+
+    document.getElementById('step2NextBtn').addEventListener('click', () => {
+      updateStep(3);
+    });
+
+    // Step 3: Back & Next
+    document.getElementById('step3BackBtn').addEventListener('click', () => {
+      updateStep(2);
+    });
+
+    document.getElementById('step3NextBtn').addEventListener('click', () => {
+      updateStep(4);
+    });
+
+    // Copy Wallet Address
+    copyBtn.addEventListener('click', () => {
+      const address = walletCode.textContent.trim();
+      navigator.clipboard.writeText(address).then(() => {
+        const originalText = copyText.textContent;
+        copyText.textContent = 'Copied!';
+        copyBtn.style.background = '#047857';
+
+        setTimeout(() => {
+          copyText.textContent = originalText;
+          copyBtn.style.background = '#0070ba';
+        }, 2000);
+      }).catch(() => {
+        alert('Failed to copy. Please copy manually.');
+      });
+    });
+
+    // Finish Button
+    finishBtn.addEventListener('click', () => {
+      closePaymentModal();
+    });
+  </script>
+</body>
+</html>
